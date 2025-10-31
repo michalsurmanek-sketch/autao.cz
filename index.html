@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="cs" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AUTAO.cz – Půjčit i koupit auto | Největší autopůjčovna a marketplace</title>
+  <meta name="description" content="AUTAO.cz – půjčovna a prodej aut, dodávek a přívěsů. Filtry, porovnání, recenze. Rezervace online – snadno, rychle, královsky modře." />
+  <meta name="theme-color" content="#0056D2" />
+
+  <!-- Google Fonts (plná diakritika) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royal: {
+              DEFAULT: '#0056D2',
+              50: '#E6F0FF', 100: '#CCE1FF', 200: '#99C3FF', 300: '#66A5FF',
+              400: '#3387FF', 500: '#0069FF', 600: '#0056D2', 700: '#0046AC',
+              800: '#003786', 900: '#002860'
+            }
+          },
+          fontFamily: { sans: ['Roboto','ui-sans-serif','system-ui'] },
+          boxShadow: { soft: '0 10px 30px -12px rgba(0,0,0,0.15)' }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Plynulé lepení headeru */
+    .is-scrolled { backdrop-filter: blur(8px); }
+    /* Native dialog styling */
+    dialog::backdrop { background: rgba(0,0,0,.45); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+  <!-- Top Bar -->
+  <header id="topbar" class="sticky top-0 z-50 border-b border-slate-200/60 bg-white/85 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button id="btnMobile" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-royal/40" aria-label="Otevřít menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <a href="#" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 rounded-xl bg-royal text-white grid place-content-center shadow-soft">
+            <span class="font-black">AO</span>
+          </div>
+          <span class="text-xl font-black tracking-tight">AUTAO.cz</span>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#kategorie" class="hover:text-royal font-medium">Kategorie</a>
+        <a href="#nabidky" class="hover:text-royal font-medium">Nabídky</a>
+        <a href="#magazin" class="hover:text-royal font-medium">Magazín</a>
+        <a href="#prodejci" class="hover:text-royal font-medium">Pro prodejce</a>
+      </nav>
+
+      <div class="hidden md:flex items-center gap-3">
+        <button id="btnLogin" class="px-4 h-10 rounded-xl border border-slate-300 hover:bg-slate-100 font-medium">Přihlášení</button>
+        <button id="btnRegister" class="px-4 h-10 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold shadow-soft">Registrace</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu (fixed overlay so it follows scroll) -->
+  <div id="mobileMenu" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <aside class="absolute left-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-xl p-6 overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-royal text-white grid place-content-center"><span class="text-xs font-black">AO</span></div>
+          <span class="font-extrabold">AUTAO.cz</span>
+        </div>
+        <button id="btnMobileClose" class="w-10 h-10 inline-grid place-content-center rounded-xl border border-slate-200 hover:bg-slate-100" aria-label="Zavřít menu"><i data-lucide="x"></i></button>
+      </div>
+      <nav class="space-y-1 text-lg">
+        <a class="block px-3 py-2 rounded-lg hover:bg-slate-100" href="#kategorie">Kategorie</a>
+        <a class="block px-3 py-2 rounded-lg hover:bg-slate-100" href="#nabidky">Nabídky</a>
+        <a class="block px-3 py-2 rounded-lg hover:bg-slate-100" href="#magazin">Magazín</a>
+        <a class="block px-3 py-2 rounded-lg hover:bg-slate-100" href="#prodejci">Pro prodejce</a>
+        <hr class="my-4">
+        <button class="w-full px-4 h-11 rounded-xl border border-slate-300 hover:bg-slate-100 font-medium" onclick="openDialog('dlgLogin')">Přihlášení</button>
+        <button class="mt-2 w-full px-4 h-11 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold" onclick="openDialog('dlgRegister')">Registrace</button>
+      </nav>
+    </aside>
+  </div>
+
+  <!-- Hero & Mega-Search -->
+  <section class="relative bg-gradient-to-b from-royal to-royal/80 text-white">
+    <div class="absolute inset-0 opacity-15" style="background-image:url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2000&auto=format&fit=crop'); background-size:cover; background-position:center;"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 mb-3 ring-1 ring-white/20">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span class="text-sm">Půjčit i koupit – na jednom místě</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-black leading-tight">Najdi vysněné <span class="underline decoration-white/60">auto</span> nebo ho pronajmi<br class="hidden md:block"> královsky snadno</h1>
+        <p class="mt-3 text-white/90 max-w-2xl">AUTAO.cz spojuje autopůjčovny, prodejce i soukromé inzerenty. Filtry, porovnání, pojištění, servis – vše na pár kliků.</p>
+      </div>
+
+      <!-- Tabs: Půjčit / Koupit -->
+      <div class="mt-6 bg-white rounded-2xl p-4 md:p-6 shadow-soft">
+        <div class="flex items-center gap-2">
+          <button id="tabRent" class="tabbtn data-[active='true']:bg-royal data-[active='true']:text-white px-4 h-10 rounded-xl font-semibold">Půjčit</button>
+          <button id="tabBuy" class="tabbtn px-4 h-10 rounded-xl font-semibold hover:bg-slate-100">Koupit</button>
+        </div>
+        <!-- Filters -->
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-5 gap-3" id="filtersRent">
+          <div>
+            <label class="text-sm font-medium">Lokalita</label>
+            <input type="text" placeholder="Brno, Praha, Zlín…" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Kategorie</label>
+            <select class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3">
+              <option>Osobní</option><option>Dodávka</option><option>SUV</option><option>Elektro</option><option>Kabriolet</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium">Převodovka</label>
+            <select class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3">
+              <option>Automat</option><option>Manuál</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium">Palivo</label>
+            <select class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3">
+              <option>Benzín</option><option>Nafta</option><option>Elektro</option><option>Hybrid</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium">Cena / den (Kč)</label>
+            <div class="mt-1 flex items-center gap-3">
+              <input id="priceRent" type="range" min="300" max="3500" value="1200" class="w-full" oninput="priceRentOut.textContent=this.value" />
+              <span id="priceRentOut" class="w-14 text-right font-semibold">1200</span>
+            </div>
+          </div>
+          <div class="md:col-span-5 flex flex-wrap items-center gap-3 pt-1">
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="accent-royal w-4 h-4"> <span>Neomezené km</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="accent-royal w-4 h-4"> <span>Mladí řidiči OK</span>
+            </label>
+            <div class="ms-auto flex items-center gap-2">
+              <button class="px-4 h-11 rounded-xl border border-slate-300 hover:bg-slate-100">Vymazat</button>
+              <button class="px-4 h-11 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Hledat</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-5 gap-3 hidden" id="filtersBuy">
+          <div>
+            <label class="text-sm font-medium">Značka</label>
+            <input type="text" placeholder="Škoda, BMW, Tesla…" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Model</label>
+            <input type="text" placeholder="Octavia, 3 Series…" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Rok od</label>
+            <input type="number" min="1990" max="2026" value="2016" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Nájezd (max. km)</label>
+            <input type="number" min="0" step="1000" placeholder="150000" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" />
+          </div>
+          <div>
+            <label class="text-sm font-medium">Cena (max. Kč)</label>
+            <div class="mt-1 flex items-center gap-3">
+              <input id="priceBuy" type="range" min="50000" max="2000000" value="450000" class="w-full" oninput="priceBuyOut.textContent=this.value" />
+              <span id="priceBuyOut" class="w-20 text-right font-semibold">450000</span>
+            </div>
+          </div>
+          <div class="md:col-span-5 flex flex-wrap items-center gap-3 pt-1">
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="accent-royal w-4 h-4"> <span>Po prvním majiteli</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="accent-royal w-4 h-4"> <span>Servisní knížka</span>
+            </label>
+            <div class="ms-auto flex items-center gap-2">
+              <button class="px-4 h-11 rounded-xl border border-slate-300 hover:bg-slate-100">Vymazat</button>
+              <button class="px-4 h-11 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Hledat</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-center gap-4 text-sm text-white/90">
+        <div class="inline-flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> Pojištění a asistenční služby</div>
+        <div class="inline-flex items-center gap-2"><i data-lucide="credit-card" class="w-4 h-4"></i> Platba online i na místě</div>
+        <div class="inline-flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> Rezervace do 60 sekund</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kategorie -->
+  <section id="kategorie" class="py-10 lg:py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <h2 class="text-2xl md:text-3xl font-black">Populární kategorie</h2>
+        <a href="#" class="text-royal font-semibold hover:underline">Zobrazit vše</a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <!-- Card -->
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/suv/600/400" alt="SUV" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">SUV</span>
+              <span class="text-xs text-slate-500">1 284</span>
+            </div>
+          </div>
+        </a>
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/elektro/600/400" alt="Elektro" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">Elektro</span>
+              <span class="text-xs text-slate-500">412</span>
+            </div>
+          </div>
+        </a>
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/dodavka/600/400" alt="Dodávky" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">Dodávky</span>
+              <span class="text-xs text-slate-500">869</span>
+            </div>
+          </div>
+        </a>
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/luxus/600/400" alt="Luxus" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">Luxus</span>
+              <span class="text-xs text-slate-500">154</span>
+            </div>
+          </div>
+        </a>
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/kabriolet/600/400" alt="Kabriolety" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">Kabriolety</span>
+              <span class="text-xs text-slate-500">92</span>
+            </div>
+          </div>
+        </a>
+        <a class="group relative overflow-hidden rounded-2xl bg-white shadow-soft border border-slate-200">
+          <img src="https://picsum.photos/seed/karavan/600/400" alt="Karavany" class="h-28 w-full object-cover group-hover:scale-105 transition" />
+          <div class="p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold">Karavany</span>
+              <span class="text-xs text-slate-500">61</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nabídky -->
+  <section id="nabidky" class="py-2 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <h2 class="text-2xl md:text-3xl font-black">Top nabídky k půjčení</h2>
+        <div class="flex items-center gap-2 text-sm">
+          <span>Třídit:</span>
+          <select class="h-10 rounded-xl border border-slate-300 px-3">
+            <option>Nejlevnější</option>
+            <option>Nejoblíbenější</option>
+            <option>Nejnovější</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Card item (repeat) -->
+        <article class="bg-white rounded-2xl shadow-soft border border-slate-200 overflow-hidden">
+          <div class="relative">
+            <img class="h-48 w-full object-cover" src="https://picsum.photos/seed/tesla/800/600" alt="Tesla Model 3" />
+            <div class="absolute top-3 left-3 flex items-center gap-2">
+              <span class="bg-white/90 text-royal text-xs font-bold px-2 py-1 rounded-lg">Elektro</span>
+              <span class="bg-white/90 text-slate-800 text-xs font-semibold px-2 py-1 rounded-lg">Neomezené km</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-bold">Tesla Model 3 Long Range</h3>
+            <p class="text-sm text-slate-600">Praha • Automat • 2023 • 258 kW</p>
+            <div class="mt-3 flex items-center justify-between">
+              <div class="text-royal font-extrabold text-xl">1 999 Kč <span class="text-sm font-medium text-slate-500">/ den</span></div>
+              <button class="px-3 h-10 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Detail</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl shadow-soft border border-slate-200 overflow-hidden">
+          <div class="relative">
+            <img class="h-48 w-full object-cover" src="https://picsum.photos/seed/octavia/800/600" alt="Škoda Octavia" />
+            <div class="absolute top-3 left-3 flex items-center gap-2">
+              <span class="bg-white/90 text-slate-800 text-xs font-semibold px-2 py-1 rounded-lg">Manuál</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-bold">Škoda Octavia 2.0 TDI</h3>
+            <p class="text-sm text-slate-600">Brno • Manuál • 2020 • 110 kW</p>
+            <div class="mt-3 flex items-center justify-between">
+              <div class="text-royal font-extrabold text-xl">1 199 Kč <span class="text-sm font-medium text-slate-500">/ den</span></div>
+              <button class="px-3 h-10 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Detail</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl shadow-soft border border-slate-200 overflow-hidden">
+          <div class="relative">
+            <img class="h-48 w-full object-cover" src="https://picsum.photos/seed/dodavka-01/800/600" alt="Ford Transit" />
+            <div class="absolute top-3 left-3 flex items-center gap-2">
+              <span class="bg-white/90 text-slate-800 text-xs font-semibold px-2 py-1 rounded-lg">Dodávka</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-bold">Ford Transit L2H2</h3>
+            <p class="text-sm text-slate-600">Zlín • Manuál • 2019 • 77 kW</p>
+            <div class="mt-3 flex items-center justify-between">
+              <div class="text-royal font-extrabold text-xl">1 490 Kč <span class="text-sm font-medium text-slate-500">/ den</span></div>
+              <button class="px-3 h-10 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Detail</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Pagination (mock) -->
+      <div class="mt-6 flex items-center justify-center gap-2">
+        <button class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100">«</button>
+        <button class="w-10 h-10 rounded-xl bg-royal text-white font-semibold">1</button>
+        <button class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100">2</button>
+        <button class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100">3</button>
+        <button class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100">»</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pro prodejce / autopůjčovny CTA -->
+  <section id="prodejci" class="py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-gradient-to-br from-white to-slate-100 border border-slate-200 rounded-2xl p-6 shadow-soft">
+          <h3 class="text-2xl font-black mb-2">Prodejce nebo autopůjčovna?</h3>
+          <p class="text-slate-600 mb-4">Získej přístup k tisícům zákazníků. Vložení inzerátů, zvýraznění, statistiky, API napojení – férově a jednoduše.</p>
+          <div class="flex flex-wrap items-center gap-3">
+            <button class="px-4 h-11 rounded-xl bg-royal text-white hover:bg-royal/90 font-semibold">Otevřít účet prodejce</button>
+            <button class="px-4 h-11 rounded-xl border border-slate-300 hover:bg-slate-100">Ceník a funkce</button>
+          </div>
+          <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700">
+            <li class="inline-flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-royal"></i> Vkládání z Excelu / API</li>
+            <li class="inline-flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-royal"></i> TOP pozice a branding</li>
+            <li class="inline-flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-royal"></i> Statistiky zobrazení a konverzí</li>
+            <li class="inline-flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-royal"></i> Podpora 7 dní v týdnu</li>
+          </ul>
+        </div>
+        <div class="bg-royal text-white rounded-2xl p-6 shadow-soft">
+          <h4 class="text-xl font-extrabold">AO Rozšíření</h4>
+          <p class="text-white/90 mt-2">Propojení s dalšími projekty AO: pojištění, polepy, reklama na autě, asistenční služby.</p>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li class="inline-flex items-center gap-2"><i data-lucide="square-asterisk" class="w-4 h-4"></i> Reklamas.cz – polepy a kampaně</li>
+            <li class="inline-flex items-center gap-2"><i data-lucide="battery-charging" class="w-4 h-4"></i> Nabíječky a elektro benefit</li>
+            <li class="inline-flex items-center gap-2"><i data-lucide="shield" class="w-4 h-4"></i> Pojištění a asistence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Magazín -->
+  <section id="magazin" class="py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <h2 class="text-2xl md:text-3xl font-black">Magazín AUTAO</h2>
+        <a href="#" class="text-royal font-semibold hover:underline">Všechny články</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-soft">
+          <img src="https://picsum.photos/seed/ev/800/500" class="h-44 w-full object-cover" alt="Elektroauta v zimě" />
+          <div class="p-4">
+            <h3 class="font-bold">Elektro v zimě: Jak plánovat delší trasy</h3>
+            <p class="text-sm text-slate-600 mt-1">Tipy na plánování nabíjení, snížení spotřeby a výběr správného vozu pro hory.</p>
+            <div class="mt-3 inline-flex items-center gap-2 text-sm text-royal font-semibold">Číst <i data-lucide="arrow-right"></i></div>
+          </div>
+        </article>
+        <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-soft">
+          <img src="https://picsum.photos/seed/detail/800/500" class="h-44 w-full object-cover" alt="Jak číst inzerát" />
+          <div class="p-4">
+            <h3 class="font-bold">Jak číst inzerát ojetiny jako profík</h3>
+            <p class="text-sm text-slate-600 mt-1">Rychlá kontrola VIN, servisní historie, skryté náklady a vyjednávací taktiky.</p>
+            <div class="mt-3 inline-flex items-center gap-2 text-sm text-royal font-semibold">Číst <i data-lucide="arrow-right"></i></div>
+          </div>
+        </article>
+        <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-soft">
+          <img src="https://picsum.photos/seed/vanlife/800/500" class="h-44 w-full object-cover" alt="Vanlife léto" />
+          <div class="p-4">
+            <h3 class="font-bold">Vanlife víkend: 5 tras po Česku</h3>
+            <p class="text-sm text-slate-600 mt-1">Karavany a obytné dodávky – legální stání, kempy a ideální spotřeba.</p>
+            <div class="mt-3 inline-flex items-center gap-2 text-sm text-royal font-semibold">Číst <i data-lucide="arrow-right"></i></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-6 border-t border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-9 h-9 rounded-xl bg-royal text-white grid place-content-center shadow-soft"><span class="font-black">AO</span></div>
+            <span class="text-lg font-black">AUTAO.cz</span>
+          </div>
+          <p class="text-sm text-slate-600">Půjčovna a marketplace aut. Královsky snadno – filtry, porovnání a férové ceny.</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-2">Sekce</h4>
+          <ul class="space-y-1 text-sm text-slate-700">
+            <li><a class="hover:text-royal" href="#kategorie">Kategorie</a></li>
+            <li><a class="hover:text-royal" href="#nabidky">Nabídky</a></li>
+            <li><a class="hover:text-royal" href="#magazin">Magazín</a></li>
+            <li><a class="hover:text-royal" href="#prodejci">Pro prodejce</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-2">Pro prodejce</h4>
+          <ul class="space-y-1 text-sm text-slate-700">
+            <li>API a exporty</li>
+            <li>Ceník služeb</li>
+            <li>Branding a TOP pozice</li>
+            <li>Kontakt na podporu</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-2">Právní</h4>
+          <ul class="space-y-1 text-sm text-slate-700">
+            <li>Obchodní podmínky</li>
+            <li>GDPR a cookies</li>
+            <li>Reklamační řád</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-600">
+        <span>© <span id="year"></span> AUTAO.cz – AO Group</span>
+        <div class="inline-flex items-center gap-4">
+          <a href="#" class="hover:text-royal inline-flex items-center gap-1"><i data-lucide='badge-check' class='w-4 h-4'></i>Ověřené vozy</a>
+          <a href="#" class="hover:text-royal inline-flex items-center gap-1"><i data-lucide='newspaper' class='w-4 h-4'></i>Tiskové zprávy</a>
+          <a href="#" class="hover:text-royal inline-flex items-center gap-1"><i data-lucide='mail' class='w-4 h-4'></i>Kontakt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Dialogy: Login / Register -->
+  <dialog id="dlgLogin" class="rounded-2xl p-0 w-[92vw] max-w-md">
+    <form method="dialog" class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-extrabold">Přihlášení</h3>
+        <button class="w-10 h-10 grid place-content-center rounded-xl border border-slate-200" aria-label="Zavřít"><i data-lucide="x"></i></button>
+      </div>
+      <label class="text-sm font-medium">E‑mail</label>
+      <input type="email" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" required>
+      <label class="text-sm font-medium mt-3 block">Heslo</label>
+      <input type="password" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" required>
+      <div class="mt-4 flex items-center justify-between">
+        <label class="inline-flex items-center gap-2 text-sm"><input type="checkbox" class="accent-royal"> Zapamatovat</label>
+        <a href="#" class="text-sm text-royal">Zapomenuté heslo</a>
+      </div>
+      <button class="mt-4 w-full h-11 rounded-xl bg-royal text-white font-semibold">Přihlásit</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlgRegister" class="rounded-2xl p-0 w-[92vw] max-w-md">
+    <form method="dialog" class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-extrabold">Vytvořit účet</h3>
+        <button class="w-10 h-10 grid place-content-center rounded-xl border border-slate-200" aria-label="Zavřít"><i data-lucide="x"></i></button>
+      </div>
+      <label class="text-sm font-medium">Jméno</label>
+      <input type="text" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" required>
+      <label class="text-sm font-medium mt-3 block">E‑mail</label>
+      <input type="email" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" required>
+      <label class="text-sm font-medium mt-3 block">Heslo</label>
+      <input type="password" class="mt-1 w-full h-11 rounded-xl border border-slate-300 px-3" required>
+      <button class="mt-4 w-full h-11 rounded-xl bg-royal text-white font-semibold">Zaregistrovat</button>
+    </form>
+  </dialog>
+
+  <!-- Scripts -->
+  <script>
+    // Ikony
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // Rok ve footeru
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Sticky header efekt
+    const topbar = document.getElementById('topbar');
+    const onScroll = () => {
+      if (window.scrollY > 4) topbar.classList.add('is-scrolled');
+      else topbar.classList.remove('is-scrolled');
+    };
+    onScroll();
+    document.addEventListener('scroll', onScroll);
+
+    // Mobile menu (fixed overlay)
+    const mobileMenu = document.getElementById('mobileMenu');
+    const btnMobile = document.getElementById('btnMobile');
+    const btnMobileClose = document.getElementById('btnMobileClose');
+    const openMenu = () => { mobileMenu.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); };
+    const closeMenu = () => { mobileMenu.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); };
+    btnMobile?.addEventListener('click', openMenu);
+    btnMobileClose?.addEventListener('click', closeMenu);
+    mobileMenu?.addEventListener('click', (e) => { if (e.target === mobileMenu.firstElementChild) closeMenu(); });
+    // auto-close on nav click
+    mobileMenu?.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    // Dialog helpers
+    function openDialog(id){ const d = document.getElementById(id); if(!d.open) d.showModal(); }
+    window.openDialog = openDialog;
+    document.getElementById('btnLogin')?.addEventListener('click', () => openDialog('dlgLogin'));
+    document.getElementById('btnRegister')?.addEventListener('click', () => openDialog('dlgRegister'));
+
+    // Tabs
+    const tabRent = document.getElementById('tabRent');
+    const tabBuy  = document.getElementById('tabBuy');
+    const filtersRent = document.getElementById('filtersRent');
+    const filtersBuy  = document.getElementById('filtersBuy');
+
+    const setTab = (name) => {
+      const rentActive = name === 'rent';
+      tabRent.setAttribute('data-active', rentActive);
+      tabBuy.setAttribute('data-active', !rentActive);
+      filtersRent.classList.toggle('hidden', !rentActive);
+      filtersBuy.classList.toggle('hidden', rentActive);
+      tabRent.classList.toggle('bg-royal', rentActive);
+      tabRent.classList.toggle('text-white', rentActive);
+      tabBuy.classList.toggle('bg-royal', !rentActive);
+      tabBuy.classList.toggle('text-white', !rentActive);
+    };
+
+    tabRent.addEventListener('click', () => setTab('rent'));
+    tabBuy.addEventListener('click', () => setTab('buy'));
+    setTab('rent');
+  </script>
+</body>
+</html>
